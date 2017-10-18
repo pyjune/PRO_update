@@ -62,10 +62,10 @@ public class Main {
 				n2 = sc.nextInt();
 				w = sc.nextInt();
 				if(adj[n1][n2]>w)
-                    adj[n1][n2] = w;
+                    			adj[n1][n2] = w;
 			}
 			s = sc.nextInt();
-            g = sc.nextInt();
+            		g = sc.nextInt();
 			dij();
 			System.out.println(d[g]);
 
