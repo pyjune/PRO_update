@@ -1,0 +1,147 @@
+import java.io.FileInputStream;
+import java.util.*;
+
+class Comp1 implements Comparator<int []>
+{
+
+	@Override
+	public int compare(int []arg0, int[] arg1) {
+		// TODO Auto-generated method stub
+		if(arg0[1] > arg1[1])
+		{
+			return 1;
+		}
+		else if(arg0[1] < arg1[1])
+		{
+			return -1;
+		}
+		else
+			return 0;
+	}
+	
+}
+class Comp2 implements Comparator<int []>
+{
+	@Override
+	public int compare(int [] arg0, int[] arg1) {
+		// TODO Auto-generated method stub
+		if(arg0[2] > arg1[2])
+		{
+			return 1;
+		}
+		else if(arg0[2] < arg1[2])
+		{
+			return -1;
+		}
+		else
+			return 0;
+	}
+	
+}
+
+public class Main {
+	static int N;
+	static int [][] p;
+	static int [] lis;
+	static int [] t;
+	static Stack <Integer> st; 
+	public static void main(String[] args) throws Exception{
+		//System.setIn(new FileInputStream("Text.txt"));
+		Scanner sc = new Scanner(System.in);
+		N = sc.nextInt();
+		p = new int[N][4];
+		t = new int [1000000];
+		st = new Stack<Integer>();
+
+		for(int i = 0; i<N; i++)
+		{
+			p[i][1] = sc.nextInt();
+			p[i][2] = sc.nextInt();
+		}
+		Arrays.sort(p, new Comp1()); // 위치를 0 ~ N-1로 변환
+		for(int i = 0; i<N; i++)
+		{
+			p[i][0] = i;
+		}
+		
+		Arrays.sort(p, new Comp2()); // 연결 번호에 대해 오름 차순 정렬
+		
+		for(int i=0; i<N; i++)
+		{
+			int lis = findMax(1, p[i][0], 0, N-1) + 1;
+			update(1, p[i][0], lis, 0, N-1);
+			p[i][3] = lis;
+		}
+		find();
+		System.out.println(N-t[1]);
+		int cnt = 0;
+		int i =0; 
+		while(cnt<N-t[1])
+		{
+			if(p[i][3]!=0)
+			{
+				System.out.println(p[i][1]);
+				cnt++;
+			}
+			i++;
+		}
+	}
+	public static int findMax(int n, int idx, int s, int e)
+	{
+		if(idx<s)
+			return 0;
+		else
+		{
+			if(e<=idx)
+				return t[n];
+			
+			else
+			{
+				int r1 = findMax(n*2, idx, s, (s+e)/2);
+				int r2 = findMax(n*2+1, idx, (s+e)/2+1, e);
+				return r1>r2?r1:r2;
+			}
+		}
+	}
+
+	public static void update(int n, int i, int LIS, int s, int e)
+	{
+		while(s!=e)
+		{
+			t[n] = LIS>t[n]?LIS:t[n];
+			int m = (s+e)/2;
+			if(i<=m)
+			{
+				e = m;
+				n = 2*n;
+			}
+			else
+			{
+				s = m+1;
+				n = 2*n+1;
+			}
+		}
+		t[n] = LIS>t[n]?LIS:t[n];
+
+	}
+	
+	public static void find()
+	{
+		Arrays.sort(p,new Comp1()); // 위치순으로 다시 정렬.
+		int lis = t[1];
+		int v = Integer.MAX_VALUE;
+		for(int i = N-1; i>=0; i--) // lis가 감소하면서 값도 작아지는 순서로 확인
+		{
+			if(lis==p[i][3] && p[i][2]<v)
+			{
+				v = p[i][2];
+				p[i][3] = 0;
+				lis--;
+				if(lis==0)
+					break;
+			}
+		}
+		
+	}
+	
+}
